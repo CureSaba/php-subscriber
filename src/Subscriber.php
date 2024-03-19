@@ -181,7 +181,7 @@ class Subscriber
      *
      * @return mixed
      */
-    private function http($url, $post_string)
+    private function http($url, $post_string = false)
     {
 
         // add any additional curl options here
