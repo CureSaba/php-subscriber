@@ -5,6 +5,7 @@
  * @link    http://code.google.com/p/pubsubhubbub/
  *
  * @author  Josh Fraser | joshfraser.com | josh@eventvue.com
+ * @author  CureSaba | saba.ad1357@gmail.com
  * @license Apache License 2.0
  */
 namespace Pubsubhubbub\Subscriber;
@@ -52,13 +53,19 @@ class Subscriber
     protected $lease_seconds;
 
     /**
+     * @var string hub.secret value for HMAC signature validation
+     */
+    protected $secret;
+
+    /**
      * Create a new Subscriber (credentials added for SuperFeedr support).
      *
      * @param string $hub_url
      * @param string $callback_url
      * @param string $credentials
+     * @param string $secret
      */
-    public function __construct($hub_url, $callback_url, $credentials = false)
+    public function __construct($hub_url, $callback_url, $credentials = false, $secret = null)
     {
         if (! isset($hub_url)) {
             throw new InvalidArgumentException('Please specify a hub url');
@@ -75,6 +82,7 @@ class Subscriber
         $this->hub_url = $hub_url;
         $this->callback_url = $callback_url;
         $this->credentials = $credentials;
+        $this->secret = $secret;
     }
 
     /**
@@ -162,6 +170,10 @@ class Subscriber
         }
         if (!is_null($this->lease_seconds)) {
             $post_string .= '&hub.lease_seconds=' . $this->lease_seconds;
+        }
+        // ここでhub.secretを追加
+        if (!is_null($this->secret)) {
+            $post_string .= '&hub.secret=' . urlencode($this->secret);
         }
 
         // make the http post request and return true/false
