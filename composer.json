@@ -1,11 +1,15 @@
 {
-    "name": "pubsubhubbub/subscriber",
+    "name": "curesaba/php-subscriber",
     "type": "library",
-    "description": "pubsubhubbub implementation of subscriber.",
-    "keywords": ["pubsubhubbub", "subscribers", "data", "feeds"],
-    "homepage": "https://github.com/pubsubhubbub/php-subscriber",
+    "description": "A PHP client library implementing a PubSubHubbub (WebSub) subscriber with hub.secret support.",
+    "keywords": ["pubsubhubbub", "websub", "subscriber", "data", "feeds"],
+    "homepage": "https://github.com/CureSaba/php-subscriber",
     "license": "Apache-2.0",
     "authors": [
+        {
+            "name": "CureSaba",
+            "homepage": "https://github.com/CureSaba"
+        },
         {
             "name": "pubsubhubbub subscriber Contributors",
             "homepage": "https://github.com/pubsubhubbub/php-subscriber/contributors"
