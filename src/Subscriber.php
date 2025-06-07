@@ -1,6 +1,6 @@
 <?php
 /**
- * A PHP client library for pubsubhubbub.
+ * A PHP client library for pubsubhubbub with verify_token support and property setters.
  *
  * @link    http://code.google.com/p/pubsubhubbub/
  *
@@ -64,9 +64,19 @@ class Subscriber
      * @param string $callback_url
      * @param string $credentials
      * @param string $secret
+     * @param string $verify
+     * @param string $verify_token
+     * @param string $lease_seconds
      */
-    public function __construct($hub_url, $callback_url, $credentials = false, $secret = null)
-    {
+    public function __construct(
+        $hub_url,
+        $callback_url,
+        $credentials = false,
+        $secret = null,
+        $verify = 'async',
+        $verify_token = null,
+        $lease_seconds = null
+    ) {
         if (! isset($hub_url)) {
             throw new InvalidArgumentException('Please specify a hub url');
         }
@@ -83,6 +93,9 @@ class Subscriber
         $this->callback_url = $callback_url;
         $this->credentials = $credentials;
         $this->secret = $secret;
+        $this->verify = $verify;
+        $this->verify_token = $verify_token;
+        $this->lease_seconds = $lease_seconds;
     }
 
     /**
@@ -171,13 +184,11 @@ class Subscriber
         if (!is_null($this->lease_seconds)) {
             $post_string .= '&hub.lease_seconds=' . $this->lease_seconds;
         }
-        // ここでhub.secretを追加
         if (!is_null($this->secret)) {
             $post_string .= '&hub.secret=' . urlencode($this->secret);
         }
 
         // make the http post request and return true/false
-        // easy to over-write to use your own http function
         if ($http_function) {
             return call_user_func_array($http_function, [$this->hub_url, $post_string]);
         }
@@ -195,7 +206,6 @@ class Subscriber
      */
     private function http($url, $post_string = false)
     {
-
         // add any additional curl options here
         $options = [
             CURLOPT_URL            => $url,
@@ -224,5 +234,48 @@ class Subscriber
         }
 
         return false;
+    }
+
+    // --- Property setters for all parameters ---
+
+    public function setHubUrl($hub_url) {
+        if (!isset($hub_url) || !preg_match('|^https?://|i', $hub_url)) {
+            throw new InvalidArgumentException('The specified hub url does not appear to be valid: ' . $hub_url);
+        }
+        $this->hub_url = $hub_url;
+        return $this;
+    }
+
+    public function setCallbackUrl($callback_url) {
+        if (!isset($callback_url)) {
+            throw new InvalidArgumentException('Please specify a callback');
+        }
+        $this->callback_url = $callback_url;
+        return $this;
+    }
+
+    public function setCredentials($credentials) {
+        $this->credentials = $credentials;
+        return $this;
+    }
+
+    public function setVerify($verify) {
+        $this->verify = $verify;
+        return $this;
+    }
+
+    public function setVerifyToken($verify_token) {
+        $this->verify_token = $verify_token;
+        return $this;
+    }
+
+    public function setLeaseSeconds($lease_seconds) {
+        $this->lease_seconds = $lease_seconds;
+        return $this;
+    }
+
+    public function setSecret($secret) {
+        $this->secret = $secret;
+        return $this;
     }
 }
